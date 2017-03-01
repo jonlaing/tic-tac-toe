@@ -1,6 +1,7 @@
 module Main where
 
-import Lib
+import Board
+import Game
 
 -- / Purely stylistic function. It's meant to put horizontal lines
 -- between lines of the board when printing
