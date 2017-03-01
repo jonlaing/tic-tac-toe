@@ -24,7 +24,7 @@ instance Show Panel where
 -- | A Board is a list of panels
 type Board = [Panel]
 
--- / Possible statuses for a game
+-- | Possible statuses for a game
 data GameStatus = InProgress | Tie | Winner Panel
 instance Show GameStatus where
   show (Winner p) = show p ++ " Wins!"
@@ -44,7 +44,7 @@ splitBoard :: Board -> [[Panel]]
 splitBoard board = chunksOf n board
   where n = dimension board
 
--- / Creates a new blank board. It will throw an error if it won't
+-- | Creates a new blank board. It will throw an error if it won't
 -- result in a square that is playable as tic-tac-toe. A valid board
 -- is a square, and has an odd number of columns
 newBoard :: Int -> Board
@@ -57,7 +57,7 @@ newBoard n
     isOdd = x `mod` 2 /= 0
     x = truncate $ sqrt $ fromIntegral n
 
--- / Determines whether a move can be made at a certain location.
+-- | Determines whether a move can be made at a certain location.
 -- Basically, you can only move somewhere if the desired location
 -- is Blank
 canMove :: Int -> Board -> Bool
@@ -65,7 +65,7 @@ canMove n board = case board !! n of
   Blank _ -> True
   _ -> False
 
--- / Update the panel at a particular position. It will throw an error
+-- | Update the panel at a particular position. It will throw an error
 -- if the index is out of range
 update :: Int -> Panel -> Board -> Board
 update n p board
@@ -73,21 +73,21 @@ update n p board
   | otherwise = (take n $ fst s) ++ [p] ++ (snd s)
   where s = splitAt (n+1) board
 
--- / Plays a move
+-- | Plays a move
 move :: Int -> Panel -> Board -> Board
 move n p board
   | (n <= length board) && canMove pos board = update pos p board
   | otherwise = error "Illegal move"
   where pos = n - 1
 
--- / Checks if a line on the board has the same non-Blank panel value
+-- | Checks if a line on the board has the same non-Blank panel value
 -- in every index. i.e. `[X,X,X]` or `[O,O,O]`
 winLine :: Panel -> Board -> Bool
 winLine (Blank _) _ = False
 winLine _ [] = True
 winLine p (x:xs) = x == p && winLine p xs
 
--- / Checks if there was a win diagonally. `dist` refers to the distance
+-- | Checks if there was a win diagonally. `dist` refers to the distance
 -- between the desired index to check. This function is generalized to
 -- check for `DiagonalLeft` and `DiagonalRight`. With some pen and paper
 -- you can figure out the requisit `dist`, or you can check the
@@ -98,7 +98,7 @@ winDiag _ p [x] = (x == p) : []
 winDiag dist p (x:xs) =
   (x == p) : winDiag dist p (drop dist xs)
 
--- / Determines whether someone won
+-- | Determines whether someone won
 win :: Win -> Panel -> Board -> Bool
 win Horizontal player board =
   or $ map (winLine player) (splitBoard board)
@@ -111,7 +111,7 @@ win DiagonalRight player board =
   and $ winDiag n player (drop (dimension board) board)
   where n = (dimension board) - 1
 
--- / Returns a list of winners. Most likely, the list will at-most have
+-- | Returns a list of winners. Most likely, the list will at-most have
 -- one element. I haven't verified that yet though.
 winners :: Board -> [Panel]
 winners board =
@@ -120,12 +120,12 @@ winners board =
   , p <- [X, O]
   , win dir p board]
 
--- / Determines whether the board is full
+-- | Determines whether the board is full
 fullBoard :: Board -> Bool
 fullBoard board =
   not $ and $ map (\x -> canMove x board) [0..((length board) - 1)]
 
--- / Figures out the current game status
+-- | Figures out the current game status
 gameStatus :: Board -> GameStatus
 gameStatus board
   | win = Winner $ head winner
@@ -135,7 +135,7 @@ gameStatus board
     winner = winners board
     win = (length winner) > 0
 
--- / Determines whether the game is over
+-- | Determines whether the game is over
 gameOver :: Board -> Bool
 gameOver board =
   case gameStatus board of
